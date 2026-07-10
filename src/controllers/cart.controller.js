@@ -29,15 +29,17 @@ const addToCart = async (req, res) => {
 
         const existingCart = await Cart.findOne({ user: req.user.id })
         if (existingCart) {
+             
             const productAlreadyExist = existingCart.items.find((item) => item.product.toString() === productId)
             if (productAlreadyExist) {
-                if (product.stock < quantity) {
+                const newQuantity = quantity + productAlreadyExist.quantity
+                if (product.stock < newQuantity) {
                     return res.status(400).json({
                         success: false,
                         message: `Only ${product.stock} items available in stock`
                     })
                 }
-                productAlreadyExist.quantity += quantity
+                productAlreadyExist.quantity = newQuantity
 
             }
             else {
