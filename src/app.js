@@ -8,7 +8,14 @@ const cartRoutes = require('./routes/cart.routes')
 const addressRoutes = require('./routes/address.routes')
 const orderRoutes = require('./routes/order.routes')
 const paymentRoutes = require('./routes/payment.routes')
+const cors = require('cors')
+
 const app = express()
+
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 
 app.use(express.json())
 app.use(cookieParser())

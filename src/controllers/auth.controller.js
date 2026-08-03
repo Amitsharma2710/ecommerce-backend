@@ -30,9 +30,26 @@ const registerUser = async (req, res) => {
             password: hashedPassword
         })
 
+         const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        )
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 7 * 24 * 60 * 60 * 1000
+
+        })
+
+         user.password = undefined
+
         res.status(201).json({
             success: true,
-            message: "User registered successfully"
+            message: "User registered successfully",
+            user
+
         })
     } catch (error) {
         res.status(500).json({ message: 'server error', error: error.message })
@@ -182,8 +199,9 @@ const updateProfile = async (req, res) => {
     try {
         const name = req.body.name?.trim()
         const gender = req.body.gender?.trim()
+        const mobile = req.body.mobile?.trim();
 
-        if (!name && !gender) {
+        if (!name && !gender && !mobile) {
             return res.status(400).json({
                 message: "Please provide at least one field to update"
             })
@@ -203,11 +221,16 @@ const updateProfile = async (req, res) => {
             user.gender = gender
         }
 
+        if (mobile) {
+            user.mobile = mobile
+        }
+
         await user.save()
 
         return res.status(200).json({
             success: true,
-            message: 'user updated successfully...'
+            message: 'user updated successfully...',
+            user
         })
     } catch (error) {
         return res.status(500).json({

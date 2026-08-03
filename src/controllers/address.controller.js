@@ -12,7 +12,7 @@ const addAddress = async (req, res) => {
                 message: 'please fill all mandatory feilds'
             })
         }
-        const existingAddress = await Address.findOne({ userId })
+        const existingAddress = await Address.findOne({ user: userId })
         if (!existingAddress) {
             isDefault = true
         }

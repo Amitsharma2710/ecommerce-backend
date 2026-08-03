@@ -22,6 +22,12 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
 
+    mobile: {
+        type: String,
+        trim: true,
+        default: ""
+    },
+
     role: {
       type: String,
       enum: ["user", "admin"],
